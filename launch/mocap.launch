@@ -1,0 +1,31 @@
+<launch>
+  <arg name="server" default="192.168.0.111"/>
+
+  <node pkg="vrpn_client_ros" type="vrpn_client_node" name="vrpn_client_node" output="screen">
+    <rosparam subst_value="true">
+      server: $(arg server)
+      port: 3883
+
+      update_frequency: 100.0
+      frame_id: world
+
+      # Use the VRPN server's time, or the client's ROS time.
+      use_server_time: false
+      broadcast_tf: true
+
+      # Must either specify refresh frequency > 0.0, or a list of trackers to create
+      refresh_tracker_frequency: 1.0
+      #trackers:
+      #- FirstTracker
+      #- SecondTracker
+    </rosparam>
+    <remap from="/vrpn_client_node/Q250_Quadcopter/pose" to="/mavros/mocap/pose"/>
+  </node>	
+  
+  <node pkg="tf" type="static_transform_publisher" name="map_odom"
+          args="0 0 0 0 0 0 map odom 1000"/>
+
+   <node pkg="tf" type="static_transform_publisher" name="odom_world"
+	          args="0 0 -0.16 1.5707 0 0 odom world 1000"/>
+
+</launch>
