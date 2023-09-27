@@ -2,14 +2,14 @@
   <arg name="server" default="192.168.0.111"/>
   <arg name="robot_rigid_body_name" default="Q250_Quadcopter"/>
 
-  <node pkg="tf" type="static_transform_publisher" name="map_odom"
+<!--   <node pkg="tf" type="static_transform_publisher" name="map_odom"
           args="0 0 0 0 0 0 map odom 1000"/>
 
   <node pkg="tf" type="static_transform_publisher" name="odom_world"
 	          args="0 0 -0.16 1.5707 0 0 odom world 1000"/>
 
   <node pkg="tf" type="static_transform_publisher" name="$(arg robot_rigid_body_name)_baselink"
-		args="0 0 0 0 0 0 $(arg robot_rigid_body_name) base_link 1000" />
+		args="0 0 0 0 0 0 $(arg robot_rigid_body_name) base_link 1000" /> -->
 
 
   <node pkg="vrpn_client_ros" type="vrpn_client_node" name="vrpn_client_node" output="screen">
