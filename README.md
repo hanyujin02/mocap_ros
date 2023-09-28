@@ -18,7 +18,9 @@ mv ~/catkin_ws/src/mocap_ros/scripts/mocap_px4.sh ~/
 
 ### Run
 a. Turn on the OptiTrack desktop computer and open the software ```motive``` on the desktop. DO NOT CHANGE ANYTHING INSIDE.
+
 b. Connect the desktop computer to ```CERLAB_WIFI```. Password: ```00000000```
+
 c. To obtain localization and fly the drone:
 ```
 sh mocap_px4.sh # this will be the same as vins_px4.sh
