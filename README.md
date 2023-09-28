@@ -1,4 +1,10 @@
 # Optitrack Motion Capture for CERLAB Drone Cage
+### Physical Setup (Only Required Once)
+a. Attach the mocal markers (at least 4) asymmetrically on the drone.
+
+b. Create a rigid body of the markers in ```motive``` with the correct center. Give it a name for example ```Q250_Quadcopter```.
+
+
 ### Installation
 This step only applies for robot's onboard computer.
 ```
@@ -21,7 +27,12 @@ a. Turn on the OptiTrack desktop computer and open the software ```motive``` on 
 
 b. Connect the desktop computer to ```CERLAB_WIFI```. Password: ```00000000```
 
-c. To obtain localization and fly the drone:
+c. Change the robot rigid body name in ```mocap_ros/launch/mocap.launch```:
+```
+<arg name="robot_rigid_body_name" default="Q250_Quadcopter"/> # change to the correct rigid body name
+```
+
+d. To obtain localization and fly the drone:
 ```
 sh mocap_px4.sh # this will be the same as vins_px4.sh
 roslaunch autonomous_flight navgation.launch # use navigation for exmaple
