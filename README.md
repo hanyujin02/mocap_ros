@@ -4,6 +4,10 @@ a. Attach the mocal markers (at least 4) asymmetrically on the drone.
 
 b. Create a rigid body of the markers in ```motive``` with the correct center. Give it a name for example ```Q250_Quadcopter```.
 
+c. Align the rigid body axis with the mocap axis as:
+
+![mocap_alignment](https://github.com/Zhefan-Xu/mocap_ros/assets/55560905/9754cfeb-3e86-46b1-9dcc-f00cf3cb311d)
+
 
 ### Installation
 This step only applies for robot's onboard computer.
