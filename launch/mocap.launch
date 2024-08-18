@@ -1,6 +1,7 @@
 <launch>
   <arg name="server" default="192.168.0.111"/>
   <arg name="robot_rigid_body_name" default="Q250_Quadcopter"/>
+  <arg name="people_name" default="person1"/>
 
 <!--   <node pkg="tf" type="static_transform_publisher" name="map_odom"
           args="0 0 0 0 0 0 map odom 1000"/>
@@ -31,11 +32,14 @@
       #- SecondTracker
     </rosparam>
     <remap from="/vrpn_client_node/$(arg robot_rigid_body_name)/pose" to="/mavros/vision_pose/pose_raw"/>
+    <remap from="/vrpn_client_node/$(arg people_name)/pose" to="/mocap/model1_state_raw"/>
   </node>	
 
+  <param name="/mocap/topic_name" type="yaml" value="['/mocap/model1_state_raw']"/>
 
   
 
   <node pkg="mocap_ros" type="pose_transform_node" name="pose_transform_node" output="screen"/>
+  <node pkg="mocap_ros" type="pose_transform_node" name="obstacle_pose_transform_node" output="screen"/>
 
 </launch>

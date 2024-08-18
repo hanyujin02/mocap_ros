@@ -1,4 +1,5 @@
 #include <ros/ros.h>
+#include <nav_msgs/Path.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <tf2_ros/transform_listener.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
@@ -7,9 +8,9 @@ geometry_msgs::PoseStamped initial_pose, initial_pose_world;
 tf2::Transform world_to_map, map_to_world;
 bool initial_pose_received = false;
 
+nav_msgs::Path poseVec;
 // Publisher for the relative map pose
 ros::Publisher relative_map_pose_pub;
-ros::Publisher relative_map_obstacle_pose_pub;
 
 // Callback function to receive the pose in the /mavros/vision_pose/pose_raw topic
 void visionPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
@@ -49,10 +50,13 @@ void visionPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
         relative_pose.pose.orientation.z = rotation.z();
         relative_pose.pose.orientation.w = rotation.w();
 
+        
+
 
         relative_pose.header.frame_id = "map";
         relative_pose.header.stamp = ros::Time::now();
-        relative_map_pose_pub.publish(relative_pose);
+        poseVec.poses.push_back(relative_pose);
+        // relative_map_pose_pub.publish(relative_pose);
     }
     catch (tf2::TransformException& ex)
     {
@@ -64,14 +68,20 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "pose_subtraction_node");
     ros::NodeHandle nh;
-
-    // Subscribe to the topic that provides the pose in the /mavros/vision_pose/pose_raw topic
-    ros::Subscriber vision_pose_sub = nh.subscribe<geometry_msgs::PoseStamped>(
-        "/mavros/vision_pose/pose_raw", 1, visionPoseCallback);
-
+    std::vector<std::string> topics;
+    nh.getParam("/mocap/topic_name", topics);
+    
+    std::vector<ros::Subscriber> model_state_sub;
+    poseVec.poses.clear();
+    for (const auto& topic : topics){
+        // Subscribe to the topic that provides the pose in the /mavros/vision_pose/pose_raw topic
+        ros::Subscriber sub = nh.subscribe<geometry_msgs::PoseStamped>(
+            topic, 1, visionPoseCallback);
+        model_state_sub.push_back(sub);
+    }
     // Advertise the new topic for the relative map pose
-    relative_map_pose_pub = nh.advertise<geometry_msgs::PoseStamped>(
-        "mavros/vision_pose/pose", 1);
+    relative_map_pose_pub = nh.advertise<nav_msgs::Path>(
+        "/mocap/model_state", 1);
 
     ros::spin();
 
