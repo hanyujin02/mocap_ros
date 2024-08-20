@@ -109,18 +109,19 @@ void obstaclePoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
         relative_pose.header.frame_id = "map";
         relative_pose.header.stamp = ros::Time::now();
         poseVec.poses[obIdx] = relative_pose;
-        if (obIdx == numOb-1){
-            obIdx = 0;
-        }
-        else{
-            obIdx++;
-        }
+
 
         // relative_map_pose_pub.publish(relative_pose);
     }
     catch (tf2::TransformException& ex)
     {
         ROS_WARN("Transform exception: %s", ex.what());
+    }        
+    if (obIdx == numOb-1){
+        obIdx = 0;
+    }
+    else{
+        obIdx++;
     }
 }
 void pubCB(void){
