@@ -13,7 +13,7 @@ nav_msgs::Path poseVec;
 // Publisher for the relative map pose
 ros::Publisher obstacle_relative_map_pose_pub;
 std::thread pubWorker;
-int obIdx=0;
+std::vector<std::string> topics;
 int numOb;
 bool newPoseReceived = false;
 
@@ -72,7 +72,7 @@ void visionPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 }
 
 // Callback function to receive the pose in the /mavros/vision_pose/pose_raw topic
-void obstaclePoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
+void obstaclePoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg, const std::string& topicName)
 {
     if (!initial_pose_received)
     {
@@ -108,6 +108,12 @@ void obstaclePoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 
         relative_pose.header.frame_id = "map";
         relative_pose.header.stamp = ros::Time::now();
+        int obIdx;
+        for (int i=0;i<int(topics.size());i++){
+            if (topicName == topics[i]){
+                obIdx = i;
+            }
+        }
         poseVec.poses[obIdx] = relative_pose;
 
 
@@ -116,12 +122,6 @@ void obstaclePoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
     catch (tf2::TransformException& ex)
     {
         ROS_WARN("Transform exception: %s", ex.what());
-    }        
-    if (obIdx == numOb-1){
-        obIdx = 0;
-    }
-    else{
-        obIdx++;
     }
 }
 void pubCB(void){
@@ -137,7 +137,6 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "pose_subtraction_node");
     ros::NodeHandle nh;
-    std::vector<std::string> topics;
     nh.getParam("/mocap/topic_name", topics);
     numOb = topics.size();
 
@@ -154,7 +153,7 @@ int main(int argc, char** argv)
     for (const auto& topic : topics){
         // Subscribe to the topic that provides the pose in the /mavros/vision_pose/pose_raw topic
         ros::Subscriber sub = nh.subscribe<geometry_msgs::PoseStamped>(
-            topic, 1, obstaclePoseCallback);
+            topic, 1, [topic](const geometry_msgs::PoseStamped::ConstPtr& msg) { obstaclePoseCallback(msg, topic); });
         model_state_sub.push_back(sub);
         
     }
